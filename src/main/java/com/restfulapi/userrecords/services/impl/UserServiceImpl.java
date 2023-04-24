@@ -107,6 +107,8 @@ public class UserServiceImpl implements UserService {
         if(!(request.getDateOfBirth().trim().equals("")|| request.getDateOfBirth() == null)) {
             LocalDate date = getFormattedDateOfBirth(request.getDateOfBirth());
             foundUser.setDateOfBirth(date);
+            int newAge = generateAge(request.getDateOfBirth());
+            foundUser.setAge(newAge);
         }
         foundUser.setDateUpdated(LocalDateTime.now().withNano(0));
 
