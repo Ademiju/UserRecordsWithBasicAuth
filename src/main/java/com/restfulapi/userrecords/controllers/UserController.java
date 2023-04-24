@@ -58,26 +58,26 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/{userId}")
-    public  ResponseEntity<?> getUserById(@PathVariable Long userId){
+    @GetMapping("/{token}")
+    public  ResponseEntity<?> getUserById(@PathVariable String token){
         try {
-            return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserByToken(token), HttpStatus.OK);
         }catch (Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
 
     }
-    @PutMapping("/{userId}")
-    public  ResponseEntity<?> updateUserDetails(@RequestBody UpdateUserRequest updateUserRequest){
+    @PutMapping("/{token}")
+    public  ResponseEntity<?> updateUserDetails(@PathVariable String token, @RequestBody UpdateUserRequest updateUserRequest){
         try {
-            return new ResponseEntity<>(userService.updateUser(updateUserRequest), HttpStatus.OK);
+            return new ResponseEntity<>(userService.updateUser(token,updateUserRequest), HttpStatus.OK);
         }catch (Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
 
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/{token}")
     public  ResponseEntity<?> deleteUserById(@PathVariable Long userId){
         try {
             return new ResponseEntity<>(userService.deleteUserById(userId),HttpStatus.OK);

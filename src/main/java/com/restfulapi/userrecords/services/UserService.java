@@ -13,8 +13,8 @@ public interface UserService {
 
     User createUser(CreateUserRequest createUserRequest);
     Map<String, Object> getAllUser(String filterFirstname, String FilterLastname,String filterGender, String filterDateOfBirth, int page, int page_size, String sortOrder, String sortField);
-    User getUserById(Long userId);
-    User updateUser(UpdateUserRequest request);
+    User getUserByToken(String token);
+    User updateUser(String token, UpdateUserRequest request);
     String deleteUserById(Long userId);
     List<User> findAllUser();
 }

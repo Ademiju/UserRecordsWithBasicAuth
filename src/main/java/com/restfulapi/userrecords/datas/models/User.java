@@ -22,8 +22,10 @@ public class User {
     private String firstname;
     private String lastname;
     private Gender gender;
-    private LocalDate date_of_birth;
-    private LocalDateTime date_created;
-    private LocalDateTime date_updated;
+    private LocalDate dateOfBirth;
+    private int age;
+    private String token;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateUpdated;
 
 }

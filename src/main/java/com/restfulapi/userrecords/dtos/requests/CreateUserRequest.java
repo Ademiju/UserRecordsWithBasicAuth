@@ -16,6 +16,6 @@ public class CreateUserRequest {
     private String firstname;
     private String lastname;
     private String gender;
-    private String date_of_birth;
+    private String dateOfBirth;
 
 }

@@ -8,6 +8,7 @@ import com.restfulapi.userrecords.dtos.requests.UpdateUserRequest;
 import com.restfulapi.userrecords.exceptions.InvalidGenderException;
 import com.restfulapi.userrecords.exceptions.UserNotFoundException;
 import com.restfulapi.userrecords.services.UserService;
+import static com.restfulapi.userrecords.utils.UserUtils.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.springframework.data.domain.Sort.by;
@@ -41,15 +41,13 @@ public class UserServiceImpl implements UserService {
         if(!isValidGender(createUserRequest.getGender().toUpperCase())) throw new InvalidGenderException("Enter M for male or F for Female");
         user.setGender(Gender.valueOf(createUserRequest.getGender().toUpperCase()));
 
-        LocalDate date = getFormattedDateOfBirth(createUserRequest.getDate_of_birth());
-        user.setDate_of_birth(date);
-        user.setDate_created(LocalDateTime.now().withNano(0));
-        user.setDate_updated(LocalDateTime.now().withNano(0));
+        LocalDate date = getFormattedDateOfBirth(createUserRequest.getDateOfBirth());
+        user.setDateOfBirth(date);
+        user.setAge(generateAge(createUserRequest.getDateOfBirth()));
+        user.setToken(generateToken(30));
+        user.setDateCreated(LocalDateTime.now().withNano(0));
+        user.setDateUpdated(LocalDateTime.now().withNano(0));
         return userRepository.save(user);
-    }
-
-    private boolean isValidGender(String gender) {
-        return gender.equals("M") || gender.equals("F");
     }
 
     @Override
@@ -90,13 +88,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+    public User getUserByToken(String token) {
+        return userRepository.findByToken(token).orElseThrow(()-> new UserNotFoundException("User Not Found"));
     }
 
     @Override
-    public User updateUser(UpdateUserRequest request) {
-        User foundUser = userRepository.findById((long) request.getId()).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+    public User updateUser(String token, UpdateUserRequest request) {
+        User foundUser = userRepository.findByToken(token).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         if(!(request.getFirstname().trim().equals("")|| request.getFirstname() == null)) {
             foundUser.setFirstname(request.getFirstname());
         }
@@ -106,11 +104,11 @@ public class UserServiceImpl implements UserService {
         if(!(request.getGender().trim().equals("")|| request.getGender() == null)) {
             if(isValidGender(request.getGender())) foundUser.setGender(Gender.valueOf(request.getGender()));
         }
-        if(!(request.getDate_of_birth().trim().equals("")|| request.getDate_of_birth() == null)) {
-            LocalDate date = getFormattedDateOfBirth(request.getDate_of_birth());
-            foundUser.setDate_of_birth(date);
+        if(!(request.getDateOfBirth().trim().equals("")|| request.getDateOfBirth() == null)) {
+            LocalDate date = getFormattedDateOfBirth(request.getDateOfBirth());
+            foundUser.setDateOfBirth(date);
         }
-        foundUser.setDate_updated(LocalDateTime.now().withNano(0));
+        foundUser.setDateUpdated(LocalDateTime.now().withNano(0));
 
         return userRepository.save(foundUser);
     }
@@ -126,9 +124,6 @@ public class UserServiceImpl implements UserService {
    return userRepository.findAll();
    }
 
-    private LocalDate getFormattedDateOfBirth(String dateOfBirth) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(dateOfBirth, formatter);
-    }
+
 
 }
